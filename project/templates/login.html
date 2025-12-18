@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <section class="card">
+        <header class="card-header">
+          <h1>Login</h1>
+          <p class="muted">Use your email and password to sign in.</p>
+        </header>
+
+        <form id="loginForm" class="form">
+          <label class="label">
+            Email
+            <input id="loginEmail" class="input" type="email" autocomplete="email" required />
+          </label>
+
+          <label class="label">
+            Password
+            <input id="loginPassword" class="input" type="password" autocomplete="current-password" required />
+          </label>
+
+          <div id="loginError" class="alert alert-error hidden"></div>
+
+          <button class="btn" type="submit">Login</button>
+        </form>
+
+        <footer class="card-footer">
+          <span class="muted">No account?</span>
+          <a href="/register">Register</a>
+        </footer>
+      </section>
+    </main>
+
+    <script src="/static/auth.js"></script>
+  </body>
+</html>
+
+

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <section class="card">
+        <header class="card-header">
+          <h1>Create account</h1>
+          <p class="muted">Register as a Job Seeker or Employer.</p>
+        </header>
+
+        <form id="registerForm" class="form">
+          <label class="label">
+            Email
+            <input id="regEmail" class="input" type="email" autocomplete="email" required />
+          </label>
+
+          <label class="label">
+            Password
+            <input
+              id="regPassword"
+              class="input"
+              type="password"
+              minlength="8"
+              autocomplete="new-password"
+              required
+            />
+          </label>
+
+          <label class="label">
+            Role
+            <select id="regRole" class="input" required>
+              <option value="job_seeker">Job Seeker</option>
+              <option value="employer">Employer</option>
+            </select>
+          </label>
+
+          <div id="registerError" class="alert alert-error hidden"></div>
+          <div id="registerSuccess" class="alert alert-success hidden"></div>
+
+          <button class="btn" type="submit">Create account</button>
+        </form>
+
+        <footer class="card-footer">
+          <span class="muted">Already have an account?</span>
+          <a href="/login">Login</a>
+        </footer>
+      </section>
+    </main>
+
+    <script src="/static/auth.js"></script>
+  </body>
+</html>
+
+

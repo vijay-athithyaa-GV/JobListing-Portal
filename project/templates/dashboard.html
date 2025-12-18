@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <section class="card">
+        <header class="card-header row">
+          <div>
+            <h1>Dashboard</h1>
+            <p class="muted">You’re logged in.</p>
+          </div>
+          <a class="btn btn-secondary" href="/logout">Logout</a>
+        </header>
+
+        <div class="kv">
+          <div class="kv-row">
+            <span class="kv-key">Email</span>
+            <span class="kv-value">{{ email }}</span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-key">Role</span>
+            <span class="kv-value">{{ role_label }}</span>
+          </div>
+        </div>
+
+        {% if role == "job_seeker" %}
+        <div class="panel">
+          <h2>Job Seeker Area</h2>
+          <p class="muted">
+            This is a role-based section visible only to Job Seekers.
+          </p>
+          <ul class="list">
+            <li>Keep your profile updated (future module).</li>
+            <li>Browse and apply to jobs (future module).</li>
+          </ul>
+        </div>
+        {% else %}
+        <div class="panel">
+          <h2>Employer Area</h2>
+          <p class="muted">
+            This is a role-based section visible only to Employers.
+          </p>
+          <ul class="list">
+            <li>Post new job listings (future module).</li>
+            <li>Review applicants (future module).</li>
+          </ul>
+        </div>
+        {% endif %}
+      </section>
+    </main>
+  </body>
+</html>
+
+
