@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profile — Job Seeker</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <section class="card">
+        <header class="card-header">
+          <h1>Edit Job Seeker Profile</h1>
+          <p class="muted">Update your personal information.</p>
+        </header>
+
+        <div id="editError" class="alert alert-error hidden"></div>
+        <div id="editSuccess" class="alert alert-success hidden"></div>
+
+        <form id="editJsForm" class="form">
+          <label class="label">
+            Full name
+            <input id="js_full_name" class="input" type="text" required />
+          </label>
+
+          <label class="label">
+            Email
+            <input id="js_email" class="input" type="email" required />
+          </label>
+
+          <label class="label">
+            Phone
+            <input id="js_phone" class="input" type="text" />
+          </label>
+
+          <label class="label">
+            Skills (comma-separated)
+            <input id="js_skills" class="input" type="text" />
+          </label>
+
+          <label class="label">
+            Experience (years)
+            <input id="js_experience_years" class="input" type="number" min="0" max="80" />
+          </label>
+
+          <label class="label">
+            Education
+            <textarea id="js_education" class="input" rows="4"></textarea>
+          </label>
+
+          <button class="btn" type="submit">Save</button>
+          <a class="btn btn-secondary" href="/profile/jobseeker">Cancel</a>
+        </form>
+      </section>
+    </main>
+
+    <script src="/static/profile.js"></script>
+  </body>
+</html>
+
+

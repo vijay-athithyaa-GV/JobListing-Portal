@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profile — Employer</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <section class="card">
+        <header class="card-header">
+          <h1>Edit Employer Profile</h1>
+          <p class="muted">Update your company information.</p>
+        </header>
+
+        <div id="editError" class="alert alert-error hidden"></div>
+        <div id="editSuccess" class="alert alert-success hidden"></div>
+
+        <form id="editEmForm" class="form">
+          <label class="label">
+            Company name
+            <input id="em_company_name" class="input" type="text" required />
+          </label>
+
+          <label class="label">
+            Description
+            <textarea id="em_company_description" class="input" rows="4"></textarea>
+          </label>
+
+          <label class="label">
+            Website
+            <input id="em_website" class="input" type="text" />
+          </label>
+
+          <label class="label">
+            Location
+            <input id="em_location" class="input" type="text" />
+          </label>
+
+          <label class="label">
+            Contact email
+            <input id="em_contact_email" class="input" type="email" />
+          </label>
+
+          <button class="btn" type="submit">Save</button>
+          <a class="btn btn-secondary" href="/profile/employer">Cancel</a>
+        </form>
+      </section>
+    </main>
+
+    <script src="/static/profile.js"></script>
+  </body>
+</html>
+
+

@@ -9,10 +9,14 @@ Run:
 
 from contextlib import asynccontextmanager
 import os
+from dotenv import load_dotenv
 
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
+
+# Load .env early so DB config is available on import
+load_dotenv()
 
 # Support both package imports (when run via `uvicorn project.main:app`)
 # and direct script execution (`python main.py` from inside the `project` folder).

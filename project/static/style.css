@@ -1,14 +1,10 @@
-:root {
-  --bg: #0b1020;
-  --card: rgba(255, 255, 255, 0.08);
-  --card-border: rgba(255, 255, 255, 0.14);
-  --text: rgba(255, 255, 255, 0.92);
-  --muted: rgba(255, 255, 255, 0.70);
-  --primary: #7c5cff;
-  --primary-hover: #6a4cff;
-  --danger: #ff5c7a;
-  --success: #46d39a;
-}
+/**
+ * Legacy style.css - imports modular CSS for backward compatibility
+ * Auth pages (login/register) use this file
+ */
+
+@import url('variables.css');
+@import url('base.css');
 
 * {
   box-sizing: border-box;

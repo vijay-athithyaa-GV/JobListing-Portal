@@ -24,6 +24,7 @@ try:  # Package-style imports
         get_current_user,
         get_current_user_optional,
         hash_password,
+        require_role,
         set_auth_cookie,
         verify_password,
     )
@@ -38,6 +39,7 @@ except ImportError:  # Script-style imports
         get_current_user,
         get_current_user_optional,
         hash_password,
+        require_role,
         set_auth_cookie,
         verify_password,
     )
@@ -134,17 +136,53 @@ async def dashboard(
     request: Request,
     user: Annotated[User | None, Depends(get_current_user_optional)],
 ):
+    """
+    Legacy dashboard route - redirects to role-specific dashboard.
+    """
     if not user:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
 
-    role_label = "Job Seeker" if user.role == "job_seeker" else "Employer"
+    # Redirect to role-specific dashboard
+    if user.role == "job_seeker":
+        return RedirectResponse(url="/dashboard/jobseeker", status_code=status.HTTP_302_FOUND)
+    elif user.role == "employer":
+        return RedirectResponse(url="/dashboard/employer", status_code=status.HTTP_302_FOUND)
+    else:
+        return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
+
+
+@router.get("/dashboard/jobseeker", response_class=HTMLResponse)
+async def jobseeker_dashboard(
+    request: Request,
+    user: Annotated[User, Depends(require_role("job_seeker"))],
+):
+    """
+    Job Seeker Dashboard - accessible only to users with job_seeker role.
+    """
     return templates.TemplateResponse(
-        "dashboard.html",
+        "jobseeker_dashboard.html",
         {
             "request": request,
             "email": user.email,
             "role": user.role,
-            "role_label": role_label,
+        },
+    )
+
+
+@router.get("/dashboard/employer", response_class=HTMLResponse)
+async def employer_dashboard(
+    request: Request,
+    user: Annotated[User, Depends(require_role("employer"))],
+):
+    """
+    Employer Dashboard - accessible only to users with employer role.
+    """
+    return templates.TemplateResponse(
+        "employer_dashboard.html",
+        {
+            "request": request,
+            "email": user.email,
+            "role": user.role,
         },
     )
 

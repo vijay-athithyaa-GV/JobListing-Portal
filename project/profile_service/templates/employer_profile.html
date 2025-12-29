@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Company Profile — Employer</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <section class="card">
+        <header class="card-header row">
+          <div>
+            <h1>Employer Profile</h1>
+            <p class="muted">View your company profile. Role: Employer</p>
+          </div>
+          <a class="btn btn-secondary" href="/profile/employer/edit">Edit Profile</a>
+        </header>
+
+        <div id="profileError" class="alert alert-error hidden"></div>
+
+        <div id="emProfile" class="kv hidden">
+          <div class="kv-row">
+            <span class="kv-key">Company name</span>
+            <span class="kv-value" id="e_company_name"></span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-key">Description</span>
+            <span class="kv-value" id="e_company_description"></span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-key">Website</span>
+            <span class="kv-value" id="e_website"></span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-key">Location</span>
+            <span class="kv-value" id="e_location"></span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-key">Contact email</span>
+            <span class="kv-value" id="e_contact_email"></span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/profile.js"></script>
+  </body>
+</html>
+
+

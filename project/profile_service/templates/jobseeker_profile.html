@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Profile — Job Seeker</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <section class="card">
+        <header class="card-header row">
+          <div>
+            <h1>Job Seeker Profile</h1>
+            <p class="muted">View your profile details. Role: Job Seeker</p>
+          </div>
+          <a class="btn btn-secondary" href="/profile/jobseeker/edit">Edit Profile</a>
+        </header>
+
+        <div id="profileError" class="alert alert-error hidden"></div>
+
+        <div id="jsProfile" class="kv hidden">
+          <div class="kv-row">
+            <span class="kv-key">Full name</span>
+            <span class="kv-value" id="v_full_name"></span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-key">Email</span>
+            <span class="kv-value" id="v_email"></span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-key">Phone</span>
+            <span class="kv-value" id="v_phone"></span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-key">Skills</span>
+            <span class="kv-value" id="v_skills"></span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-key">Experience (years)</span>
+            <span class="kv-value" id="v_experience_years"></span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-key">Education</span>
+            <span class="kv-value" id="v_education"></span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-key">Resume</span>
+            <span class="kv-value" id="v_resume"><span class="muted">Not uploaded</span></span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Upload Resume (PDF)</h2>
+          <p class="muted">Max size 2 MB.</p>
+
+          <div id="resumeError" class="alert alert-error hidden"></div>
+          <div id="resumeSuccess" class="alert alert-success hidden"></div>
+
+          <form id="resumeForm" class="form">
+            <input id="resumeFile" class="input" type="file" accept="application/pdf" required />
+            <button class="btn" type="submit">Upload</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/profile.js"></script>
+  </body>
+</html>
+
+
