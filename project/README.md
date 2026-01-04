@@ -1,46 +1,32 @@
-## Job Listing Portal — Authentication Module (FastAPI + UI)
+# JobListing Portal (Backend)
 
-This folder contains **ONLY** the User Authentication module (Registration, Login, JWT, RBAC) with a simple UI (Jinja2 + HTML/CSS/JS).
+This is a backend API built using **FastAPI** for managing job listings.
 
-### Tech stack
-- FastAPI + Jinja2 templates
-- PostgreSQL
-- SQLAlchemy (async) + asyncpg
-- JWT auth (HTTP-only cookie)
-- Passlib (bcrypt)
+## Tech Stack
 
-### Setup (Windows PowerShell)
-Create and activate a virtualenv, then install deps:
+- Python
+- FastAPI
+- SQLAlchemy
+- JWT Authentication
 
-```bash
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r .\project\requirements.txt
-```
+## Setup Instructions
 
-### Configure environment
-Set these environment variables (PowerShell examples):
-
-```powershell
-$env:DATABASE_URL="postgresql+asyncpg://postgres:postgres@localhost:5432/job_portal"
-$env:SECRET_KEY="change-me-in-prod"
-$env:ACCESS_TOKEN_EXPIRE_MINUTES="60"
-$env:COOKIE_SECURE="false"
-```
-
-Notes:
-- **DATABASE_URL** must point to a PostgreSQL database (created ahead of time).
-- **COOKIE_SECURE** should be `true` in production (HTTPS).
-
-### Run
+1. Clone the repository
 
 ```bash
-uvicorn project.main:app --reload
+git clone <repo-url>
+cd JobListing-Portal
+
+pip install -r requirements.txt
+
+## Run the server
+python -m uvicorn project.main:app --reload
+
+## open in browser
+http://127.0.0.1:8000/docs
+
+## Authentication
+- Use `/auth/login` to generate JWT token
+- Authorize via Swagger UI
+- Use token for protected routes
 ```
-
-Open:
-- `/register`
-- `/login`
-- `/dashboard` (protected)
-
-
