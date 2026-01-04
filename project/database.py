@@ -14,13 +14,13 @@ def _get_database_url() -> str:
     Get the database URL from the environment, with a sensible local default.
 
     The URL should look like:
-    postgresql+asyncpg://user:password@host:5432/dbname
+    postgresql+asyncpg://user:password@host:5433/dbname
     """
     url = os.getenv("DATABASE_URL")
     if not url:
         # Fallback for local development so the app can start without extra config.
         # Adjust user/password/host/dbname here if your local Postgres is different.
-        url = "postgresql+asyncpg://postgres:Vijay%402005@localhost:5432/job_portal"
+        url = "postgresql+asyncpg://postgres:SQLdata%40pass@localhost:5433/job_portal"
     return url
 
 

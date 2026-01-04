@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Create / Update Job</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <h2>Create / Update Job</h2>
+
+    <form id="jobForm" onsubmit="createJob(event)">
+      <label>Job Title</label>
+      <input type="text" id="title" required />
+
+      <label>Description</label>
+      <textarea id="description" required></textarea>
+
+      <label>Qualifications</label>
+      <textarea id="qualifications" required></textarea>
+
+      <label>Responsibilities</label>
+      <textarea id="responsibilities" required></textarea>
+
+      <label>Location</label>
+      <input type="text" id="location" required />
+
+      <label>Salary Range</label>
+      <input
+        type="text"
+        id="salary_range"
+        placeholder="20000 - 40000"
+        required
+      />
+
+      <button type="submit">Save Job</button>
+    </form>
+
+    <p id="msg"></p>
+    <script src="/static/jobs.js"></script>
+  </body>
+</html>

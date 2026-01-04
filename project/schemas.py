@@ -38,4 +38,30 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
 
+# -------------------------
+# Job Schemas
+# -------------------------
+
+class JobBase(BaseModel):
+    title: str
+    description: str
+    qualifications: str | None = None
+    responsibilities: str | None = None
+    location: str
+    salary_range: str | None = None
+
+
+class JobCreate(JobBase):
+    pass
+
+
+class JobUpdate(JobBase):
+    pass
+
+
+class JobPublic(JobBase):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    employer_id: int
 

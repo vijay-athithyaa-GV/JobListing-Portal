@@ -32,4 +32,19 @@ class User(Base):
         server_default=func.now(),
     )
 
+class Job(Base):
+    __tablename__ = "jobs"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+
+    title: Mapped[str] = mapped_column(String(100), nullable=False)
+    description: Mapped[str] = mapped_column(String, nullable=False)
+
+    qualifications: Mapped[str | None] = mapped_column(String, nullable=True)
+    responsibilities: Mapped[str | None] = mapped_column(String, nullable=True)
+
+    location: Mapped[str] = mapped_column(String(100), nullable=False)
+    salary_range: Mapped[str | None] = mapped_column(String(50), nullable=True)
+
+    employer_id: Mapped[int] = mapped_column(Integer, nullable=False)
 

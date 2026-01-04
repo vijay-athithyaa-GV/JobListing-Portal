@@ -94,5 +94,3 @@ async function loginFlow() {
 
 registerFlow();
 loginFlow();
-
-
