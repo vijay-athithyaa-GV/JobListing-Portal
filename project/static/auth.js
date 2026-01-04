@@ -207,3 +207,33 @@ async function loginFlow() {
 // Initialize flows if forms exist
 registerFlow();
 loginFlow();
+
+// Theme handling on auth pages (no navbar)
+(function initThemeForAuthPages() {
+  const form = document.getElementById('loginForm') || document.getElementById('registerForm');
+  // Only mount on auth pages
+  if (!form) return;
+
+  const saved = localStorage.getItem('theme');
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'theme-toggle theme-toggle--floating';
+  btn.setAttribute('aria-label', 'Toggle dark mode');
+  const setBtnState = () => {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    btn.setAttribute('aria-pressed', String(isDark));
+    btn.innerHTML = `${isDark ? '🌙' : '☀️'} <span>${isDark ? 'Dark' : 'Light'}</span>`;
+  };
+  setBtnState();
+  btn.addEventListener('click', () => {
+    const next = (document.documentElement.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    setBtnState();
+  });
+  document.body.appendChild(btn);
+})();

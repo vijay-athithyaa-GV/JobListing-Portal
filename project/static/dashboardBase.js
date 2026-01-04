@@ -22,6 +22,8 @@ const DashboardBase = {
     this.initUserMenu();
     this.initSidebar();
     this.updateUserInfo();
+    this.initTheme();
+    this.mountThemeToggle();
   },
 
   /**
@@ -54,6 +56,46 @@ const DashboardBase = {
         await Auth.logout();
       });
     }
+  },
+
+  /**
+   * THEME
+   */
+  initTheme() {
+    const saved = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = saved || (prefersDark ? 'dark' : 'light');
+    this.setTheme(theme);
+  },
+
+  setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    const btn = document.querySelector('.theme-toggle');
+    if (btn) {
+      const isDark = theme === 'dark';
+      btn.setAttribute('aria-pressed', String(isDark));
+      btn.innerHTML = `${isDark ? '🌙' : '☀️'} <span>${isDark ? 'Dark' : 'Light'}</span>`;
+    }
+  },
+
+  mountThemeToggle() {
+    const right = document.querySelector('.navbar-right');
+    if (!right) return;
+    if (right.querySelector('.theme-toggle')) return;
+    const btn = document.createElement('button');
+    btn.className = 'theme-toggle';
+    btn.type = 'button';
+    btn.setAttribute('aria-label', 'Toggle dark mode');
+    const current = localStorage.getItem('theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const isDark = current === 'dark';
+    btn.setAttribute('aria-pressed', String(isDark));
+    btn.innerHTML = `${isDark ? '🌙' : '☀️'} <span>${isDark ? 'Dark' : 'Light'}</span>`;
+    btn.addEventListener('click', () => {
+      const next = (document.documentElement.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
+      this.setTheme(next);
+    });
+    right.prepend(btn);
   },
 
   /**

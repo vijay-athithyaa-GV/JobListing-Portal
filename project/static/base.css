@@ -16,9 +16,7 @@ body {
   font-family: var(--font-family);
   font-size: var(--font-size-base);
   line-height: var(--line-height-normal);
-  background: radial-gradient(1000px 700px at 20% 15%, rgba(124, 92, 255, 0.35), transparent 55%),
-    radial-gradient(800px 600px at 80% 30%, rgba(70, 211, 154, 0.25), transparent 55%),
-    var(--bg);
+  background: var(--bg);
   color: var(--text);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
@@ -26,13 +24,13 @@ body {
 }
 
 a {
-  color: var(--text);
+  color: var(--primary);
   text-decoration: none;
   transition: color var(--transition-fast);
 }
 
 a:hover {
-  color: var(--primary);
+  color: var(--primary-hover);
 }
 
 button {
@@ -131,8 +129,8 @@ select {
   width: 100%;
   padding: 12px 14px;
   border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--card-border);
+  background: var(--card);
   color: var(--text);
   outline: none;
   transition: all var(--transition-fast);
@@ -174,14 +172,14 @@ select {
 }
 
 .btn.btn-secondary {
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: #ffffff;
+  border: 1px solid var(--card-border);
   color: var(--text);
 }
 
 .btn.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.25);
+  background: var(--card-hover);
+  border-color: var(--primary);
 }
 
 .btn.btn-danger {
@@ -246,5 +244,42 @@ select {
   background: var(--info-bg);
   border-color: var(--info-border);
   color: var(--info);
+}
+
+/* Theme toggle */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 9999px;
+  border: 1px solid var(--card-border);
+  background: #ffffff;
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+  transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.theme-toggle:hover {
+  background: var(--card-hover);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .theme-toggle {
+  background: var(--card);
+  color: var(--text);
+}
+
+.theme-toggle--floating {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: var(--z-navbar);
+}
+
+.theme-toggle__icon {
+  width: 16px;
+  height: 16px;
 }
 
