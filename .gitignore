@@ -1,0 +1,20 @@
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.so
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Logs
+*.log
+
+# Local uploads / generated files
+project/profile_service/uploads/
+
+

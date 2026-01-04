@@ -1,9 +1,11 @@
 from contextlib import asynccontextmanager
 import os
+import logging
 from dotenv import load_dotenv
 from fastapi import FastAPI, Depends, Query
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.exceptions import ResponseValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
 from typing import Optional
@@ -34,6 +36,35 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(title="Job Listing Portal", lifespan=lifespan)
+
+logger = logging.getLogger("job_portal")
+
+@app.exception_handler(ResponseValidationError)
+async def response_validation_exception_handler(request, exc: ResponseValidationError):
+    """
+    Make ResponseValidationErrors easy to debug in development by logging
+    the exact route/method that triggered them.
+    """
+    # Use print so this shows up even if logging config is not wired.
+    print(
+        f"ResponseValidationError on {request.method} {request.url.path}: {exc.errors()}",
+        flush=True,
+    )
+    logger.exception(
+        "ResponseValidationError on %s %s: %s",
+        request.method,
+        request.url.path,
+        exc.errors(),
+    )
+    return JSONResponse(
+        status_code=500,
+        content={
+            "detail": "Response validation failed on the server.",
+            "path": request.url.path,
+            "method": request.method,
+            "errors": exc.errors(),
+        },
+    )
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")

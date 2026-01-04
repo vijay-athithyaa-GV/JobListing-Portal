@@ -43,7 +43,7 @@ AUTH_BASE_URL = os.getenv("AUTH_BASE_URL", "http://127.0.0.1:8000")
 # -------------------------
 # API endpoints - Job Seeker
 # -------------------------
-@router.get("/profiles/jobseeker/me", response_model=JobSeekerProfilePublic)
+@router.get("/profiles/jobseeker/me")
 async def get_my_job_seeker_profile(
 	user: Annotated[CurrentUser, Depends(require_role("job_seeker"))],
 	db: Annotated[AsyncSession, Depends(get_db)],
@@ -52,10 +52,11 @@ async def get_my_job_seeker_profile(
 	profile = result.scalar_one_or_none()
 	if not profile:
 		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Profile not found.")
-	return profile
+	# Return plain dict to avoid response validation issues if ORM serialization isn't enabled.
+	return JobSeekerProfilePublic.model_validate(profile).model_dump()
 
 
-@router.post("/profiles/jobseeker", response_model=JobSeekerProfilePublic, status_code=status.HTTP_201_CREATED)
+@router.post("/profiles/jobseeker", status_code=status.HTTP_201_CREATED)
 async def create_job_seeker_profile(
 	payload: JobSeekerProfileCreate,
 	user: Annotated[CurrentUser, Depends(require_role("job_seeker"))],
@@ -81,10 +82,10 @@ async def create_job_seeker_profile(
 		await db.rollback()
 		raise
 	await db.refresh(profile)
-	return profile
+	return JobSeekerProfilePublic.model_validate(profile).model_dump()
 
 
-@router.put("/profiles/jobseeker", response_model=JobSeekerProfilePublic)
+@router.put("/profiles/jobseeker")
 async def update_job_seeker_profile(
 	payload: JobSeekerProfileUpdate,
 	user: Annotated[CurrentUser, Depends(require_role("job_seeker"))],
@@ -111,10 +112,10 @@ async def update_job_seeker_profile(
 
 	await db.commit()
 	await db.refresh(profile)
-	return profile
+	return JobSeekerProfilePublic.model_validate(profile).model_dump()
 
 
-@router.post("/profiles/jobseeker/resume", response_model=ResumeUploadResponse)
+@router.post("/profiles/jobseeker/resume")
 async def upload_resume(
 	file: UploadFile,
 	user: Annotated[CurrentUser, Depends(require_role("job_seeker"))],
@@ -151,7 +152,7 @@ async def upload_resume(
 # -------------------------
 # API endpoints - Employer
 # -------------------------
-@router.get("/profiles/employer/me", response_model=EmployerProfilePublic)
+@router.get("/profiles/employer/me")
 async def get_my_employer_profile(
 	user: Annotated[CurrentUser, Depends(require_role("employer"))],
 	db: Annotated[AsyncSession, Depends(get_db)],
@@ -160,10 +161,10 @@ async def get_my_employer_profile(
 	profile = result.scalar_one_or_none()
 	if not profile:
 		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Profile not found.")
-	return profile
+	return EmployerProfilePublic.model_validate(profile).model_dump()
 
 
-@router.post("/profiles/employer", response_model=EmployerProfilePublic, status_code=status.HTTP_201_CREATED)
+@router.post("/profiles/employer", status_code=status.HTTP_201_CREATED)
 async def create_employer_profile(
 	payload: EmployerProfileCreate,
 	user: Annotated[CurrentUser, Depends(require_role("employer"))],
@@ -188,10 +189,10 @@ async def create_employer_profile(
 		await db.rollback()
 		raise
 	await db.refresh(profile)
-	return profile
+	return EmployerProfilePublic.model_validate(profile).model_dump()
 
 
-@router.put("/profiles/employer", response_model=EmployerProfilePublic)
+@router.put("/profiles/employer")
 async def update_employer_profile(
 	payload: EmployerProfileUpdate,
 	user: Annotated[CurrentUser, Depends(require_role("employer"))],
@@ -215,7 +216,7 @@ async def update_employer_profile(
 
 	await db.commit()
 	await db.refresh(profile)
-	return profile
+	return EmployerProfilePublic.model_validate(profile).model_dump()
 
 
 # -------------------------

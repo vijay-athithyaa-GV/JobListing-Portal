@@ -54,7 +54,7 @@ router = APIRouter()
 # -------------------------
 # API endpoints
 # -------------------------
-@router.post("/auth/register", response_model=UserPublic, status_code=status.HTTP_201_CREATED)
+@router.post("/auth/register", status_code=status.HTTP_201_CREATED)
 async def register_user(payload: UserCreate, db: Annotated[AsyncSession, Depends(get_db)]):
     """
     Create a new user.
@@ -73,10 +73,11 @@ async def register_user(payload: UserCreate, db: Annotated[AsyncSession, Depends
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered.")
 
     await db.refresh(user)
-    return user
+    # Return plain dict to avoid response validation issues if ORM serialization isn't enabled.
+    return UserPublic.model_validate(user).model_dump()
 
 
-@router.post("/auth/login", response_model=TokenResponse)
+@router.post("/auth/login")
 async def login_user(
     payload: UserLogin,
     db: Annotated[AsyncSession, Depends(get_db)],
@@ -100,12 +101,12 @@ async def login_user(
     return {"access_token": token, "token_type": "bearer"}
 
 
-@router.get("/auth/me", response_model=UserPublic)
+@router.get("/auth/me")
 async def me(user: Annotated[User, Depends(get_current_user)]):
     """
     Protected endpoint returning the current user.
     """
-    return user
+    return UserPublic.model_validate(user).model_dump()
 
 
 @router.post("/auth/logout")
