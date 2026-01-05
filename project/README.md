@@ -1,32 +1,72 @@
-# JobListing Portal (Backend)
+# Job Listing Portal 🧑‍💼💼
 
-This is a backend API built using **FastAPI** for managing job listings.
+A full-stack Job Listing Portal built using **FastAPI**, **SQLAlchemy (Async)**, and **Vanilla JavaScript**.
 
-## Tech Stack
+Employers can:
 
-- Python
+- Register & Login
+- Create, update, delete job listings
+- View job previews
+- Manage only their own jobs securely
+
+---
+
+## 🚀 Tech Stack
+
+### Backend
+
 - FastAPI
-- SQLAlchemy
+- Async SQLAlchemy
+- SQLite / PostgreSQL
 - JWT Authentication
+- Jinja2 Templates
 
-## Setup Instructions
+### Frontend
 
-1. Clone the repository
+- HTML
+- CSS
+- Vanilla JavaScript (Fetch API)
+
+---
+
+## 🔐 Authentication
+
+- JWT-based authentication
+- Role-based access (`employer`)
+- Protected routes using FastAPI dependencies
+
+---
+
+## 📌 Features
+
+- Employer authentication (Login / Logout)
+- Create job listings
+- Update job listings
+- Delete job listings
+- View job preview
+- Secure access (only employer can manage their jobs)
+
+---
+
+## ▶️ Run Locally
+
+### 1️⃣ Create virtual environment
 
 ```bash
-git clone <repo-url>
-cd JobListing-Portal
+python -m venv .venv
 
-pip install -r requirements.txt
+## Activate
+.venv\Scripts\activate
 
-## Run the server
-python -m uvicorn project.main:app --reload
+## install dependencis
+pip install -r project/requirements.txt
 
-## open in browser
-http://127.0.0.1:8000/docs
+## run server
+uvicorn project.main:app --reload
 
-## Authentication
-- Use `/auth/login` to generate JWT token
-- Authorize via Swagger UI
-- Use token for protected routes
+App URLs
+Login: http://127.0.0.1:8000/login
+Dashboard: http://127.0.0.1:8000/dashboard
+Job Listings: http://127.0.0.1:8000/job-listings
+Create Job: http://127.0.0.1:8000/job-form
 ```

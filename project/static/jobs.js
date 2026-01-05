@@ -1,7 +1,6 @@
 console.log("Jobs JS loaded");
 
 const API_URL = "http://127.0.0.1:8000";
-const token = localStorage.getItem("token");
 const params = new URLSearchParams(window.location.search);
 const jobId = params.get("job_id");
 
@@ -9,21 +8,27 @@ const jobId = params.get("job_id");
    PAGE LOAD
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("jobForm");
   const container = document.getElementById("jobsContainer");
-  if (container) loadJobs();
-  if (jobId) loadJobForEdit();
+
+  if (form) {
+    form.addEventListener("submit", createJob);
+  }
+
+  if (container) {
+    setTimeout(loadJobs, 200); // 🔑 allow auth cookie to settle
+  }
+
+  if (jobId) {
+    loadJobForEdit();
+  }
 });
 
 /* =========================
    CREATE / UPDATE JOB
 ========================= */
-window.createJob = async function (event) {
+async function createJob(event) {
   event.preventDefault();
-
-  if (!token) {
-    alert("Not logged in");
-    return;
-  }
 
   const jobData = {
     title: document.getElementById("title").value,
@@ -39,29 +44,34 @@ window.createJob = async function (event) {
 
   const res = await fetch(url, {
     method,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { "Content-Type": "application/json" },
+    credentials: "same-origin",
     body: JSON.stringify(jobData),
   });
 
   if (res.ok) {
-    alert(jobId ? "Job updated" : "Job created");
+    alert(
+      jobId ? "Job updated successfully ✅" : "Job created successfully ✅"
+    );
     window.location.href = "/job-listings";
   } else {
     const err = await res.json();
-    alert(err.detail || "Operation failed");
+    alert(err.detail || "Operation failed ❌");
   }
-};
+}
 
 /* =========================
    LOAD JOB LIST
 ========================= */
 async function loadJobs() {
   const res = await fetch(`${API_URL}/jobs`, {
-    headers: { Authorization: `Bearer ${token}` },
+    credentials: "same-origin",
   });
+
+  if (!res.ok) {
+    console.error("Failed to load jobs");
+    return;
+  }
 
   const jobs = await res.json();
   const container = document.getElementById("jobsContainer");
@@ -78,8 +88,10 @@ async function loadJobs() {
         <h3>${job.title}</h3>
         <p><b>Location:</b> ${job.location}</p>
         <p><b>Salary:</b> ${job.salary_range}</p>
+        <button onclick="viewJob(${job.id})">View</button>
         <button onclick="editJob(${job.id})">Edit</button>
         <button onclick="deleteJob(${job.id})">Delete</button>
+
       </div>
     `;
   });
@@ -90,20 +102,25 @@ async function loadJobs() {
 ========================= */
 async function loadJobForEdit() {
   const res = await fetch(`${API_URL}/jobs`, {
-    headers: { Authorization: `Bearer ${token}` },
+    credentials: "same-origin",
   });
+
+  if (!res.ok) return;
 
   const jobs = await res.json();
   const job = jobs.find((j) => j.id == jobId);
 
-  if (!job) return alert("Job not found");
+  if (!job) {
+    alert("Job not found");
+    return;
+  }
 
-  title.value = job.title;
-  description.value = job.description;
-  qualifications.value = job.qualifications;
-  responsibilities.value = job.responsibilities;
-  location.value = job.location;
-  salary_range.value = job.salary_range;
+  document.getElementById("title").value = job.title;
+  document.getElementById("description").value = job.description;
+  document.getElementById("qualifications").value = job.qualifications;
+  document.getElementById("responsibilities").value = job.responsibilities;
+  document.getElementById("location").value = job.location;
+  document.getElementById("salary_range").value = job.salary_range;
 }
 
 /* =========================
@@ -114,14 +131,14 @@ async function deleteJob(id) {
 
   const res = await fetch(`${API_URL}/jobs/${id}`, {
     method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
+    credentials: "same-origin",
   });
 
   if (res.ok) {
-    alert("Deleted");
+    alert("Job deleted ✅");
     loadJobs();
   } else {
-    alert("Delete failed");
+    alert("Delete failed ❌");
   }
 }
 
@@ -130,4 +147,8 @@ async function deleteJob(id) {
 ========================= */
 function editJob(id) {
   window.location.href = `/job-form?job_id=${id}`;
+}
+
+function viewJob(id) {
+  window.location.href = `/job-view?job_id=${id}`;
 }

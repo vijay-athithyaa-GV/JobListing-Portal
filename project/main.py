@@ -10,7 +10,7 @@ Run:
 from contextlib import asynccontextmanager
 import os
 
-from fastapi import Request
+from fastapi import Request,Depends
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
@@ -26,14 +26,17 @@ security = HTTPBearer()
 # Support both package imports and script execution
 try:
     from project.database import engine
-    from project.models import Base
     from project.routes.auth_routes import router as auth_router
     from project.routes.jobs import router as jobs_router
+    from project.models import Base
+
 except ImportError:
     from database import engine
-    from models import Base
     from routes.auth_routes import router as auth_router
     from routes.jobs import router as jobs_router
+    from models import Base
+
+
 
 
 @asynccontextmanager
@@ -116,8 +119,16 @@ if __name__ == "__main__":
     )
 
 
+from project.auth import get_current_user_optional
+
 @app.get("/job-listings", response_class=HTMLResponse)
-async def job_listings(request: Request):
+async def job_listings(
+    request: Request,
+    user=Depends(get_current_user_optional),
+):
+    if not user:
+        return RedirectResponse("/login", status_code=302)
+
     return templates.TemplateResponse(
         "job_listings.html",
         {"request": request}
@@ -129,4 +140,17 @@ async def job_form(request: Request):
     return templates.TemplateResponse(
         "job_form.html",
         {"request": request}
+    )
+
+@app.get("/job-view", response_class=HTMLResponse)
+async def job_view(
+    request: Request,
+    user=Depends(get_current_user_optional),
+):
+    if not user:
+        return RedirectResponse("/login", status_code=302)
+
+    return templates.TemplateResponse(
+        "job_view.html",
+        {"request": request},
     )
