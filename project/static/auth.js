@@ -1,4 +1,4 @@
-/**
+  /**
  * Authentication Utilities
  * Centralized authentication and API communication
  */
