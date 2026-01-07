@@ -5,7 +5,10 @@ Async SQLAlchemy engine/session setup for PostgreSQL for the Profile service.
 """
 
 import os
+from dotenv import find_dotenv, load_dotenv
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
+
+load_dotenv(find_dotenv(usecwd=True))
 
 
 def _get_database_url() -> str:

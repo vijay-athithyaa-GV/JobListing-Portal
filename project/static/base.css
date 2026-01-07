@@ -182,6 +182,15 @@ select {
   border-color: var(--primary);
 }
 
+/* Ensure secondary buttons remain readable in dark theme (white button surface + dark text) */
+[data-theme="dark"] .btn.btn-secondary {
+  color: #111827;
+}
+
+[data-theme="dark"] .btn.btn-secondary:hover {
+  background: #f3f4f6;
+}
+
 .btn.btn-danger {
   background: var(--error);
 }

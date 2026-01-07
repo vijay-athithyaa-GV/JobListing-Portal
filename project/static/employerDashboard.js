@@ -4,6 +4,8 @@
  */
 
 const EmployerDashboard = {
+  jobs: [],
+  jobCounts: {},
   /**
    * Initialize employer dashboard
    */
@@ -19,34 +21,44 @@ const EmployerDashboard = {
    * Load dashboard data
    */
   async loadDashboardData() {
-    // TODO: Replace with actual API calls when backend is ready
-    this.loadJobListings();
-    this.loadRecentApplications();
-    this.updateKPIs();
+    await this.loadJobListings();
+    await this.loadRecentApplications();
   },
 
   /**
    * Load job listings (placeholder)
    */
   async loadJobListings() {
-    // TODO: Fetch from API endpoint like /api/employer/jobs
     const jobsContainer = document.getElementById('jobListingsTable');
     if (!jobsContainer) return;
 
     try {
-      // Placeholder data structure
-      const jobs = [
-        // Example structure:
-        // {
-        //   id: 1,
-        //   title: "Senior Software Engineer",
-        //   applications_count: 12,
-        //   status: "active",
-        //   created_date: "2024-01-10T10:00:00Z"
-        // }
-      ];
+      jobsContainer.innerHTML = `
+        <tr>
+          <td colspan="5" class="empty-state-cell">
+            <div class="empty-state">
+              <div class="empty-state-icon">💼</div>
+              <div class="empty-state-title">Loading jobs…</div>
+            </div>
+          </td>
+        </tr>
+      `;
+      const user = DashboardBase.currentUser || (await Auth.getCurrentUser());
+      if (!user) return;
 
-      if (jobs.length === 0) {
+      const res = await Auth.apiCall(`/jobs?employerId=${user.id}`, { method: 'GET' });
+      const jobs = await res.json();
+      this.jobs = Array.isArray(jobs) ? jobs : [];
+
+      // Per-job application counts for this employer
+      try {
+        const countsRes = await Auth.apiCall('/applications/employer/job-counts', { method: 'GET' });
+        this.jobCounts = (await countsRes.json()) || {};
+      } catch (e) {
+        this.jobCounts = {};
+      }
+
+      if (this.jobs.length === 0) {
         jobsContainer.innerHTML = `
           <tr>
             <td colspan="5" class="empty-state-cell">
@@ -58,27 +70,28 @@ const EmployerDashboard = {
             </td>
           </tr>
         `;
+        this.updateKPIs();
         return;
       }
 
       // Render jobs table
-      jobsContainer.innerHTML = jobs
+      jobsContainer.innerHTML = this.jobs
         .map(
           (job) => `
         <tr>
-          <td><strong>${job.title}</strong></td>
-          <td>${job.applications_count}</td>
+          <td><strong>${job.jobTitle}</strong></td>
+          <td>${(this.jobCounts && this.jobCounts[String(job.jobId)]) ? this.jobCounts[String(job.jobId)] : (job.applicationsCount ?? 0)}</td>
           <td>${this.getStatusBadge(job.status)}</td>
-          <td>${DashboardBase.formatDate(job.created_date)}</td>
+          <td>${DashboardBase.formatDate(job.createdAt)}</td>
           <td>
             <div class="action-buttons">
-              <button class="btn btn-sm btn-secondary" onclick="EmployerDashboard.viewJob(${job.id})">
-                View
-              </button>
-              <button class="btn btn-sm btn-secondary" onclick="EmployerDashboard.editJob(${job.id})">
+              <button class="btn btn-sm btn-secondary" onclick="EmployerDashboard.editJob(${job.jobId})">
                 Edit
               </button>
-              <button class="btn btn-sm btn-danger" onclick="EmployerDashboard.deleteJob(${job.id})">
+              <button class="btn btn-sm btn-secondary" onclick="EmployerDashboard.closeJob(${job.jobId})">
+                Close Job
+              </button>
+              <button class="btn btn-sm btn-danger" onclick="EmployerDashboard.deleteJob(${job.jobId})">
                 Delete
               </button>
             </div>
@@ -87,6 +100,8 @@ const EmployerDashboard = {
       `
         )
         .join('');
+
+      this.updateKPIs();
     } catch (error) {
       console.error('Error loading job listings:', error);
       DashboardBase.showError('Failed to load job listings', jobsContainer);
@@ -97,13 +112,23 @@ const EmployerDashboard = {
    * Load recent applications (placeholder)
    */
   async loadRecentApplications() {
-    // TODO: Fetch from API endpoint like /api/employer/recent-applications
     const applicationsContainer = document.getElementById('recentApplicationsTable');
     if (!applicationsContainer) return;
 
     try {
-      // Placeholder data
-      const applications = [];
+      applicationsContainer.innerHTML = `
+        <tr>
+          <td colspan="5" class="empty-state-cell">
+            <div class="empty-state">
+              <div class="empty-state-icon">📄</div>
+              <div class="empty-state-title">Loading applications…</div>
+            </div>
+          </td>
+        </tr>
+      `;
+
+      const res = await Auth.apiCall('/applications/employer/recent?limit=5', { method: 'GET' });
+      const applications = await res.json();
 
       if (applications.length === 0) {
         applicationsContainer.innerHTML = `
@@ -125,12 +150,12 @@ const EmployerDashboard = {
         .map(
           (app) => `
         <tr>
-          <td><strong>${app.candidate_name}</strong></td>
-          <td>${app.job_title}</td>
+          <td><strong>${app.candidateName}</strong></td>
+          <td>${app.jobTitle}</td>
           <td>${this.getStatusBadge(app.status)}</td>
-          <td>${DashboardBase.formatDate(app.applied_date)}</td>
+          <td>${DashboardBase.formatDate(app.appliedAt)}</td>
           <td>
-            <button class="btn btn-sm btn-primary" onclick="EmployerDashboard.viewApplication(${app.id})">
+            <button class="btn btn-sm btn-primary" onclick="EmployerDashboard.viewApplication(${app.applicationId})">
               Review
             </button>
           </td>
@@ -148,11 +173,10 @@ const EmployerDashboard = {
    * Update KPI cards
    */
   updateKPIs() {
-    // TODO: Fetch real data from API
-    const totalJobs = 0;
-    const activeJobs = 0;
-    const totalApplications = 0;
-    const pendingApplications = 0;
+    const totalJobs = Array.isArray(this.jobs) ? this.jobs.length : 0;
+    const activeJobs = Array.isArray(this.jobs)
+      ? this.jobs.filter((j) => (j.status || '').toLowerCase() === 'active').length
+      : 0;
 
     // Update KPI values
     const totalJobsEl = document.getElementById('kpiTotalJobs');
@@ -161,11 +185,22 @@ const EmployerDashboard = {
     const activeJobsEl = document.getElementById('kpiActiveJobs');
     if (activeJobsEl) activeJobsEl.textContent = activeJobs;
 
-    const totalAppsEl = document.getElementById('kpiTotalApplications');
-    if (totalAppsEl) totalAppsEl.textContent = totalApplications;
+    // Employer application summary
+    Auth.apiCall('/applications/employer/summary', { method: 'GET' })
+      .then((res) => res.json())
+      .then((summary) => {
+        const totalApplications = summary?.total ?? 0;
+        const pendingApplications = summary?.pending ?? 0;
 
-    const pendingAppsEl = document.getElementById('kpiPendingApplications');
-    if (pendingAppsEl) pendingAppsEl.textContent = pendingApplications;
+        const totalAppsEl = document.getElementById('kpiTotalApplications');
+        if (totalAppsEl) totalAppsEl.textContent = totalApplications;
+
+        const pendingAppsEl = document.getElementById('kpiPendingApplications');
+        if (pendingAppsEl) pendingAppsEl.textContent = pendingApplications;
+      })
+      .catch(() => {
+        // keep existing values on error
+      });
   },
 
   /**
@@ -196,9 +231,23 @@ const EmployerDashboard = {
    * Edit job
    */
   editJob(jobId) {
-    // TODO: Implement job edit functionality
-    console.log('Edit job:', jobId);
-    alert('Job editing coming soon!');
+    window.location.href = `/jobs/post?id=${jobId}`;
+  },
+
+  async closeJob(jobId) {
+    if (!confirm('Close this job?')) return;
+
+    try {
+      await Auth.apiCall(`/jobs/${jobId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ status: 'closed' }),
+      });
+      DashboardBase.showSuccess('Job closed successfully', document.querySelector('.dashboard-content'));
+      await this.loadJobListings();
+    } catch (error) {
+      console.error('Error closing job:', error);
+      DashboardBase.showError(error.message || 'Failed to close job', document.querySelector('.dashboard-content'));
+    }
   },
 
   /**
@@ -210,14 +259,12 @@ const EmployerDashboard = {
     }
 
     try {
-      // TODO: Implement delete API call
-      // await Auth.apiCall(`/api/employer/jobs/${jobId}`, { method: 'DELETE' });
-      console.log('Delete job:', jobId);
+      await Auth.apiCall(`/jobs/${jobId}`, { method: 'DELETE' });
       DashboardBase.showSuccess('Job deleted successfully', document.querySelector('.dashboard-content'));
-      this.loadJobListings();
+      await this.loadJobListings();
     } catch (error) {
       console.error('Error deleting job:', error);
-      DashboardBase.showError('Failed to delete job', document.querySelector('.dashboard-content'));
+      DashboardBase.showError(error.message || 'Failed to delete job', document.querySelector('.dashboard-content'));
     }
   },
 
@@ -225,9 +272,7 @@ const EmployerDashboard = {
    * View application details
    */
   viewApplication(applicationId) {
-    // TODO: Implement application detail view
-    console.log('View application:', applicationId);
-    alert('Application review coming soon!');
+    window.location.href = `/applications/review?id=${applicationId}`;
   },
 };
 

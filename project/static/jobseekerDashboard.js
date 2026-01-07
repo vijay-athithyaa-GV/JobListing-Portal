@@ -4,6 +4,7 @@
  */
 
 const JobseekerDashboard = {
+  summary: { total: 0, pending: 0, accepted: 0, rejected: 0 },
   /**
    * Initialize job seeker dashboard
    */
@@ -19,32 +20,32 @@ const JobseekerDashboard = {
    * Load dashboard data
    */
   async loadDashboardData() {
-    // TODO: Replace with actual API calls when backend is ready
-    this.loadAppliedJobs();
+    await this.loadAppliedJobs();
     this.loadNotifications();
-    this.updateKPIs();
   },
 
   /**
    * Load applied jobs (placeholder)
    */
   async loadAppliedJobs() {
-    // TODO: Fetch from API endpoint like /api/jobseeker/applications
     const appliedJobsContainer = document.getElementById('appliedJobsTable');
     if (!appliedJobsContainer) return;
 
     try {
-      // Placeholder data structure
-      const applications = [
-        // Example structure:
-        // {
-        //   id: 1,
-        //   job_title: "Senior Software Engineer",
-        //   company: "Tech Corp",
-        //   status: "pending",
-        //   applied_date: "2024-01-15T10:00:00Z"
-        // }
-      ];
+      appliedJobsContainer.innerHTML = `
+        <tr>
+          <td colspan="5" class="empty-state-cell">
+            <div class="empty-state">
+              <div class="empty-state-icon">📋</div>
+              <div class="empty-state-title">Loading applications…</div>
+            </div>
+          </td>
+        </tr>
+      `;
+      const res = await Auth.apiCall('/applications/me', { method: 'GET' });
+      const data = await res.json();
+      const applications = data && Array.isArray(data.applications) ? data.applications : [];
+      this.summary = data && data.summary ? data.summary : this.summary;
 
       if (applications.length === 0) {
         appliedJobsContainer.innerHTML = `
@@ -58,6 +59,7 @@ const JobseekerDashboard = {
             </td>
           </tr>
         `;
+        this.updateKPIs();
         return;
       }
 
@@ -66,12 +68,12 @@ const JobseekerDashboard = {
         .map(
           (app) => `
         <tr>
-          <td><strong>${app.job_title}</strong></td>
-          <td>${app.company}</td>
+          <td><strong>${app.jobTitle}</strong></td>
+          <td>${app.companyName || ''}</td>
           <td>${this.getStatusBadge(app.status)}</td>
-          <td>${DashboardBase.formatDate(app.applied_date)}</td>
+          <td>${DashboardBase.formatDate(app.appliedAt)}</td>
           <td>
-            <button class="btn btn-sm btn-secondary" onclick="JobseekerDashboard.viewApplication(${app.id})">
+            <button class="btn btn-sm btn-secondary" onclick="JobseekerDashboard.viewApplication(${app.applicationId})">
               View
             </button>
           </td>
@@ -79,6 +81,8 @@ const JobseekerDashboard = {
       `
         )
         .join('');
+
+      this.updateKPIs();
     } catch (error) {
       console.error('Error loading applied jobs:', error);
       DashboardBase.showError('Failed to load applications', appliedJobsContainer);
@@ -107,11 +111,10 @@ const JobseekerDashboard = {
    * Update KPI cards
    */
   updateKPIs() {
-    // TODO: Fetch real data from API
-    const totalApplications = 0;
-    const pendingApplications = 0;
-    const acceptedApplications = 0;
-    const rejectedApplications = 0;
+    const totalApplications = this.summary?.total ?? 0;
+    const pendingApplications = this.summary?.pending ?? 0;
+    const acceptedApplications = this.summary?.accepted ?? 0;
+    const rejectedApplications = this.summary?.rejected ?? 0;
 
     // Update KPI values
     const totalEl = document.getElementById('kpiTotalApplications');
